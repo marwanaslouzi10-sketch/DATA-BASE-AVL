@@ -51,6 +51,27 @@
             z-index: 0;
         }
 
+        /* --- Cinematic Page Transition Overlay --- */
+        #page-transition-overlay {
+            position: fixed;
+            inset: 0;
+            background: linear-gradient(135deg, #050608 0%, #0d1322 50%, #050608 100%);
+            z-index: 900;
+            pointer-events: none;
+            opacity: 0;
+            transform: scaleX(0);
+            transform-origin: right;
+            transition: transform 0.4s cubic-bezier(0.77, 0, 0.175, 1), opacity 0.3s ease;
+            box-shadow: 0 0 50px var(--primary);
+        }
+
+        #page-transition-overlay.active-transition {
+            pointer-events: all;
+            opacity: 1;
+            transform: scaleX(1);
+            transform-origin: left;
+        }
+
         /* --- Intro Screen --- */
         #intro-screen {
             position: fixed;
@@ -61,7 +82,7 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            transition: opacity 1s ease, visibility 1s;
+            transition: opacity 0.8s cubic-bezier(0.77, 0, 0.175, 1), transform 0.8s cubic-bezier(0.77, 0, 0.175, 1);
         }
 
         .intro-scene {
@@ -138,10 +159,19 @@
             text-transform: uppercase;
         }
 
+        .intro-nav-options {
+            display: flex;
+            gap: 15px;
+            margin-top: 35px;
+            opacity: 0;
+            animation: fadeIn 1s ease forwards 1.8s;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
         .enter-btn {
-            margin-top: 40px;
-            padding: 12px 35px;
-            font-size: 1.1rem;
+            padding: 12px 28px;
+            font-size: 1rem;
             font-weight: bold;
             color: #000;
             background: linear-gradient(90deg, #ffe066, var(--gold));
@@ -149,14 +179,29 @@
             border-radius: 30px;
             cursor: pointer;
             box-shadow: 0 0 20px var(--gold-glow);
-            opacity: 0;
-            animation: fadeIn 1s ease forwards 1.8s;
             transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
         .enter-btn:hover {
             transform: scale(1.08);
             box-shadow: 0 0 35px var(--gold);
+        }
+
+        .enter-btn.secondary-btn {
+            background: rgba(255, 255, 255, 0.08);
+            color: #fff;
+            border: 1px solid var(--border);
+            box-shadow: none;
+        }
+
+        .enter-btn.secondary-btn:hover {
+            background: linear-gradient(135deg, var(--secondary), var(--primary));
+            color: #000;
+            border-color: transparent;
+            box-shadow: 0 0 20px rgba(79, 172, 254, 0.4);
         }
 
         /* --- Header & Navigation --- */
@@ -175,6 +220,7 @@
             display: flex;
             align-items: center;
             gap: 12px;
+            cursor: pointer;
         }
 
         .logo-text {
@@ -204,6 +250,8 @@
             display: flex;
             align-items: center;
             gap: 8px;
+            position: relative;
+            overflow: hidden;
         }
 
         .nav-btn:hover, .nav-btn.active {
@@ -221,19 +269,24 @@
             max-width: 1200px;
             margin: 40px auto;
             padding: 0 20px;
+            perspective: 1000px;
         }
 
         .page-section {
             display: none;
             opacity: 0;
-            transform: translateY(20px);
-            transition: opacity 0.5s ease, transform 0.5s ease;
+            transform: scale(0.92) translateY(40px) rotateX(10deg);
+            filter: blur(8px);
+            transition: opacity 0.5s cubic-bezier(0.2, 0.8, 0.2, 1), 
+                        transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1),
+                        filter 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
         }
 
         .page-section.active {
             display: block;
             opacity: 1;
-            transform: translateY(0);
+            transform: scale(1) translateY(0) rotateX(0deg);
+            filter: blur(0);
         }
 
         .section-header {
@@ -344,7 +397,7 @@
         /* --- Teams Grid --- */
         .teams-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
             gap: 20px;
         }
 
@@ -425,6 +478,42 @@
             font-style: italic;
         }
 
+        /* Registered Players List (REGS) */
+        .players-section {
+            margin-top: 15px;
+            border-top: 1px dashed var(--border);
+            padding-top: 12px;
+        }
+
+        .players-title {
+            font-size: 0.8rem;
+            color: var(--gold);
+            font-weight: bold;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .players-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            max-height: 120px;
+            overflow-y: auto;
+            padding-left: 5px;
+        }
+
+        .player-badge {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-light);
+            font-size: 0.75rem;
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-family: monospace;
+        }
+
         /* --- Animations --- */
         @keyframes zoomInText {
             to { opacity: 1; transform: scale(1); }
@@ -470,6 +559,9 @@
     <!-- Background Canvas for Particles -->
     <canvas id="particles-canvas"></canvas>
 
+    <!-- Cinematic Transition Overlay -->
+    <div id="page-transition-overlay"></div>
+
     <!-- Intro / Hero Screen -->
     <div id="intro-screen">
         <div class="intro-scene">
@@ -479,24 +571,36 @@
             </div>
             <div class="title-avl">AVL</div>
             <div class="title-sub">Arabic Virtual League — Season 1</div>
-            <button class="enter-btn" onclick="enterLeague()">دخول الدوري <i class="fa-solid fa-arrow-left"></i></button>
+            
+            <!-- 3 Main Choices in Intro -->
+            <div class="intro-nav-options">
+                <button class="enter-btn" onclick="enterLeague('div1')">
+                    <i class="fa-solid fa-crown"></i> Division 1
+                </button>
+                <button class="enter-btn secondary-btn" onclick="enterLeague('div2')">
+                    <i class="fa-solid fa-shield"></i> Division 2
+                </button>
+                <button class="enter-btn secondary-btn" onclick="enterLeague('teams')">
+                    <i class="fa-solid fa-users"></i> Teams
+                </button>
+            </div>
         </div>
     </div>
 
     <!-- Header / Navigation -->
     <header>
-        <div class="logo">
+        <div class="logo" onclick="showIntro()">
             <i class="fa-solid fa-shield-halved" style="color: var(--gold); font-size: 1.8rem;"></i>
             <div class="logo-text">AVL <span>LEAGUE</span></div>
         </div>
         <nav>
-            <button class="nav-btn active" onclick="switchPage('div1', this)">
+            <button class="nav-btn active" id="btn-div1" onclick="switchPage('div1', this)">
                 <i class="fa-solid fa-crown"></i> Division 1
             </button>
-            <button class="nav-btn" onclick="switchPage('div2', this)">
+            <button class="nav-btn" id="btn-div2" onclick="switchPage('div2', this)">
                 <i class="fa-solid fa-shield"></i> Division 2
             </button>
-            <button class="nav-btn" onclick="switchPage('teams', this)">
+            <button class="nav-btn" id="btn-teams" onclick="switchPage('teams', this)">
                 <i class="fa-solid fa-users"></i> Teams
             </button>
         </nav>
@@ -553,215 +657,4 @@
                             <th>له</th>
                             <th>عليه</th>
                             <th>+/-</th>
-                            <th>النقاط</th>
-                        </tr>
-                    </thead>
-                    <tbody id="div2-tbody">
-                        <!-- Populated by JS -->
-                    </tbody>
-                </table>
-            </div>
-        </section>
-
-        <!-- TEAMS PAGE -->
-        <section id="teams" class="page-section">
-            <div class="section-header">
-                <h1 class="section-title">ALL TEAMS</h1>
-                <p class="section-subtitle">قائمة جميع الأندية والإدارة (Owner & Manager)</p>
-            </div>
-            <div class="teams-grid" id="teams-grid">
-                <!-- Populated by JS -->
-            </div>
-        </section>
-
-    </main>
-
-    <script>
-        /* --- Data Store --- */
-        const div1Data = [
-            { pos: 1, name: "RCA", p: 0, w: 0, d: 0, l: 0, gf: 0, ga: 0, gd: 0, pts: 0, owner: "<@mejinina_2>", manager: "<@.themagic.>" },
-            { pos: 2, name: "WAC", p: 0, w: 0, d: 0, l: 0, gf: 0, ga: 0, gd: 0, pts: 0, owner: "<@andrewwww___.>", manager: "N/A" },
-            { pos: 3, name: "KAC", p: 0, w: 0, d: 0, l: 0, gf: 0, ga: 0, gd: 0, pts: 0, owner: "<@anasss0876>", manager: "N/A" },
-            { pos: 4, name: "KACM", p: 0, w: 0, d: 0, l: 0, gf: 0, ga: 0, gd: 0, pts: 0, owner: "<@hamza_founti>", manager: "<@l5ofax.06>" },
-            { pos: 5, name: "CRB", p: 0, w: 0, d: 0, l: 0, gf: 0, ga: 0, gd: 0, pts: 0, owner: "<@alilo_crb>", manager: "<@skwadra_0049>" },
-            { pos: 6, name: "MAS", p: 0, w: 0, d: 0, l: 0, gf: 0, ga: 0, gd: 0, pts: 0, owner: "<@zacky_fesska>", manager: "<@reslienzav2>" },
-            { pos: 7, name: "IRT", p: 0, w: 0, d: 0, l: 0, gf: 0, ga: 0, gd: 0, pts: 0, owner: "<@tanjawi_uh_07>", manager: "N/A" },
-            { pos: 8, name: "JSK", p: 0, w: 0, d: 0, l: 0, gf: 0, ga: 0, gd: 0, pts: 0, owner: "<@maheroujda0roblox>", manager: "N/A" }
-        ];
-
-        const div2Data = [
-            { pos: 1, name: "Zamalek", p: 0, w: 0, d: 0, l: 0, gf: 0, ga: 0, gd: 0, pts: 0, owner: "<@spi7_x>", manager: "N/A" },
-            { pos: 2, name: "USMH", p: 0, w: 0, d: 0, l: 0, gf: 0, ga: 0, gd: 0, pts: 0, owner: "<@1chr1f.s.57>", manager: "N/A" },
-            { pos: 3, name: "Al Ahly", p: 0, w: 0, d: 0, l: 0, gf: 0, ga: 0, gd: 0, pts: 0, owner: "<selm_95750>", manager: "N/A" },
-            { pos: 4, name: "ASFAR", p: 0, w: 0, d: 0, l: 0, gf: 0, ga: 0, gd: 0, pts: 0, owner: "<@ziyad__77>", manager: "N/A" },
-            { pos: 5, name: "USMA", p: 0, w: 0, d: 0, l: 0, gf: 0, ga: 0, gd: 0, pts: 0, owner: "N/A", manager: "N/A" },
-            { pos: 6, name: "ESS", p: 0, w: 0, d: 0, l: 0, gf: 0, ga: 0, gd: 0, pts: 0, owner: "<@mouhamedhamdi>", manager: "N/A" },
-            { pos: 7, name: "RAC", p: 0, w: 0, d: 0, l: 0, gf: 0, ga: 0, gd: 0, pts: 0, owner: "<@spxxwalid>", manager: "N/A" },
-            { pos: 8, name: "MCA", p: 0, w: 0, d: 0, l: 0, gf: 0, ga: 0, gd: 0, pts: 0, owner: "N/A", manager: "N/A" }
-        ];
-
-        /* --- Render Functions --- */
-        function renderTable(data, elementId) {
-            const tbody = document.getElementById(elementId);
-            tbody.innerHTML = "";
-
-            data.forEach(team => {
-                const tr = document.createElement("tr");
-                if (team.pos === 1) tr.classList.add("gold-row");
-
-                tr.innerHTML = `
-                    <td>${team.pos === 1 ? '<i class="fa-solid fa-crown gold-badge-icon"></i> 1' : team.pos}</td>
-                    <td>
-                        <div class="team-cell">
-                            <div class="team-badge">${team.name.substring(0, 2).toUpperCase()}</div>
-                            <span>${team.name}</span>
-                        </div>
-                    </td>
-                    <td>${team.p}</td>
-                    <td>${team.w}</td>
-                    <td>${team.d}</td>
-                    <td>${team.l}</td>
-                    <td>${team.gf}</td>
-                    <td>${team.ga}</td>
-                    <td>${team.gd}</td>
-                    <td style="font-weight: bold; color: ${team.pos === 1 ? 'var(--gold)' : 'var(--primary)'}">${team.pts}</td>
-                `;
-                tbody.appendChild(tr);
-            });
-        }
-
-        function renderTeams() {
-            const grid = document.getElementById("teams-grid");
-            grid.innerHTML = "";
-
-            const allTeams = [
-                ...div1Data.map(t => ({ ...t, div: "Division 1" })),
-                ...div2Data.map(t => ({ ...t, div: "Division 2" }))
-            ];
-
-            allTeams.forEach(team => {
-                const card = document.createElement("div");
-                card.className = "team-card";
-                card.innerHTML = `
-                    <div class="team-card-header">
-                        <div class="team-card-icon"><i class="fa-solid fa-shield-cat"></i></div>
-                        <div>
-                            <div class="team-card-title">${team.name}</div>
-                            <span style="font-size: 0.75rem; color: var(--text-dim);">${team.div}</span>
-                        </div>
-                    </div>
-                    <div class="team-card-info">
-                        <div class="info-row">
-                            <span class="info-label"><i class="fa-solid fa-user-gear"></i> Owner</span>
-                            <span class="info-value ${team.owner === 'N/A' ? 'na' : ''}">${team.owner}</span>
-                        </div>
-                        <div class="info-row">
-                            <span class="info-label"><i class="fa-solid fa-user-tie"></i> Manager</span>
-                            <span class="info-value ${team.manager === 'N/A' ? 'na' : ''}">${team.manager}</span>
-                        </div>
-                    </div>
-                `;
-                grid.appendChild(card);
-            });
-        }
-
-        /* --- Navigation Controller --- */
-        function switchPage(pageId, btn) {
-            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-            if (btn) btn.classList.add('active');
-
-            const activeSection = document.querySelector('.page-section.active');
-            if (activeSection) {
-                activeSection.style.opacity = '0';
-                activeSection.style.transform = 'translateY(20px)';
-                setTimeout(() => {
-                    activeSection.classList.remove('active');
-                    const targetSection = document.getElementById(pageId);
-                    targetSection.classList.add('active');
-                    setTimeout(() => {
-                        targetSection.style.opacity = '1';
-                        targetSection.style.transform = 'translateY(0)';
-                    }, 50);
-                }, 300);
-            }
-        }
-
-        function enterLeague() {
-            const intro = document.getElementById("intro-screen");
-            intro.style.opacity = "0";
-            setTimeout(() => {
-                intro.style.display = "none";
-            }, 1000);
-        }
-
-        /* --- Background Particles Canvas --- */
-        const canvas = document.getElementById('particles-canvas');
-        const ctx = canvas.getContext('2d');
-        let particles = [];
-
-        function resizeCanvas() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        }
-
-        window.addEventListener('resize', resizeCanvas);
-        resizeCanvas();
-
-        class Particle {
-            constructor() {
-                this.reset();
-            }
-
-            reset() {
-                this.x = Math.random() * canvas.width;
-                this.y = Math.random() * canvas.height;
-                this.size = Math.random() * 2 + 0.5;
-                this.speedX = (Math.random() - 0.5) * 0.5;
-                this.speedY = (Math.random() - 0.5) * 0.5;
-                this.alpha = Math.random() * 0.5 + 0.2;
-            }
-
-            update() {
-                this.x += this.speedX;
-                this.y += this.speedY;
-
-                if (this.x < 0 || this.x > canvas.width || this.y < 0 || this.y > canvas.height) {
-                    this.reset();
-                }
-            }
-
-            draw() {
-                ctx.fillStyle = `rgba(79, 172, 254, ${this.alpha})`;
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.fill();
-            }
-        }
-
-        function initParticles() {
-            particles = [];
-            for (let i = 0; i < 70; i++) {
-                particles.push(new Particle());
-            }
-        }
-
-        function animateParticles() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            particles.forEach(p => {
-                p.update();
-                p.draw();
-            });
-            requestAnimationFrame(animateParticles);
-        }
-
-        /* --- Initialization --- */
-        window.onload = () => {
-            renderTable(div1Data, "div1-tbody");
-            renderTable(div2Data, "div2-tbody");
-            renderTeams();
-            initParticles();
-            animateParticles();
-        };
-    </script>
-</body>
-</html>
+                            
