@@ -41,7 +41,7 @@
                 radial-gradient(circle at 10% 80%, rgba(255, 215, 0, 0.08), transparent 50%);
         }
 
-        /* Background Canvas */
+        /* --- Background Particles Canvas --- */
         #particles-canvas {
             position: fixed;
             top: 0;
@@ -55,7 +55,10 @@
         /* --- Intro Screen --- */
         #intro-screen {
             position: fixed;
-            inset: 0;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
             background: #050608;
             z-index: 1000;
             display: flex;
@@ -103,13 +106,24 @@
         }
 
         @keyframes floatTrophy {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-15px); }
+            0% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-15px);
+            }
+            100% {
+                transform: translateY(0);
+            }
         }
 
         @keyframes orbitBall {
-            0% { transform: rotate(0deg) translateX(55px) rotate(0deg); }
-            100% { transform: rotate(360deg) translateX(55px) rotate(-360deg); }
+            0% {
+                transform: rotate(0deg) translateX(55px) rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg) translateX(55px) rotate(-360deg);
+            }
         }
 
         .title-avl {
@@ -182,7 +196,9 @@
             color: #fff;
         }
 
-        .logo-text span { color: var(--gold); }
+        .logo-text span {
+            color: var(--gold);
+        }
 
         nav {
             display: flex;
@@ -205,7 +221,8 @@
             gap: 8px;
         }
 
-        .nav-btn:hover, .nav-btn.active {
+        .nav-btn:hover, 
+        .nav-btn.active {
             background: linear-gradient(135deg, var(--secondary), var(--primary));
             color: #000;
             border-color: transparent;
@@ -213,7 +230,7 @@
             transform: translateY(-2px);
         }
 
-        /* --- Main Content --- */
+        /* --- Main Content Area --- */
         main {
             position: relative;
             z-index: 5;
@@ -314,7 +331,9 @@
             background: linear-gradient(90deg, rgba(255, 215, 0, 0.12), transparent);
         }
 
-        tr.gold-row td { color: #fff; }
+        tr.gold-row td {
+            color: #fff;
+        }
 
         tr.gold-row .team-badge {
             background: var(--gold);
@@ -405,9 +424,12 @@
             font-size: 0.85rem;
         }
 
-        .info-value.na { color: var(--text-dim); font-style: italic; }
+        .info-value.na {
+            color: var(--text-dim);
+            font-style: italic;
+        }
 
-        /* --- Contracts / Roster Section --- */
+        /* --- Contracts Section --- */
         .contracts-container {
             display: flex;
             flex-direction: column;
@@ -484,23 +506,61 @@
             color: #fff;
         }
 
-        /* --- Animations --- */
-        @keyframes zoomInText { to { opacity: 1; transform: scale(1); } }
-        @keyframes fadeIn { to { opacity: 1; } }
+        /* --- Keyframe Animations --- */
+        @keyframes zoomInText {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
 
-        /* Mobile Responsive */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* --- Mobile Responsive Rules --- */
         @media (max-width: 768px) {
-            header { flex-direction: column; gap: 15px; text-align: center; }
-            nav { justify-content: center; }
-            .nav-btn { padding: 8px 14px; font-size: 0.85rem; }
-            .title-avl { font-size: 2.5rem; }
-            .title-sub { font-size: 0.85rem; }
-            .players-list { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
+            header {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+
+            nav {
+                justify-content: center;
+            }
+
+            .nav-btn {
+                padding: 8px 14px;
+                font-size: 0.85rem;
+            }
+
+            .title-avl {
+                font-size: 2.5rem;
+            }
+
+            .title-sub {
+                font-size: 0.85rem;
+            }
+
+            .players-list {
+                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            }
         }
     </style>
 </head>
 <body>
 
+    <!-- Background Canvas for Interactive Particles -->
     <canvas id="particles-canvas"></canvas>
 
     <!-- Intro / Hero Screen -->
@@ -516,7 +576,7 @@
         </div>
     </div>
 
-    <!-- Header / Nav -->
+    <!-- Header / Navigation Bar -->
     <header>
         <div class="logo">
             <i class="fa-solid fa-shield-halved" style="color: var(--gold); font-size: 1.8rem;"></i>
@@ -541,7 +601,7 @@
     <!-- Main Content Area -->
     <main>
         
-        <!-- DIVISION 1 -->
+        <!-- DIVISION 1 PAGE -->
         <section id="div1" class="page-section active">
             <div class="section-header">
                 <h1 class="section-title">DIVISION 1</h1>
@@ -563,12 +623,14 @@
                             <th>النقاط</th>
                         </tr>
                     </thead>
-                    <tbody id="div1-tbody"></tbody>
+                    <tbody id="div1-tbody">
+                        <!-- Rendered via Javascript -->
+                    </tbody>
                 </table>
             </div>
         </section>
 
-        <!-- DIVISION 2 -->
+        <!-- DIVISION 2 PAGE -->
         <section id="div2" class="page-section">
             <div class="section-header">
                 <h1 class="section-title">DIVISION 2</h1>
@@ -590,27 +652,33 @@
                             <th>النقاط</th>
                         </tr>
                     </thead>
-                    <tbody id="div2-tbody"></tbody>
+                    <tbody id="div2-tbody">
+                        <!-- Rendered via Javascript -->
+                    </tbody>
                 </table>
             </div>
         </section>
 
-        <!-- TEAMS -->
+        <!-- TEAMS PAGE -->
         <section id="teams" class="page-section">
             <div class="section-header">
                 <h1 class="section-title">ALL TEAMS</h1>
                 <p class="section-subtitle">قائمة جميع الأندية والإدارة (Owner & Manager)</p>
             </div>
-            <div class="teams-grid" id="teams-grid"></div>
+            <div class="teams-grid" id="teams-grid">
+                <!-- Rendered via Javascript -->
+            </div>
         </section>
 
-        <!-- CONTRAT (REGS DIV1) -->
+        <!-- CONTRAT / REGS DIV1 PAGE -->
         <section id="contrat" class="page-section">
             <div class="section-header">
                 <h1 class="section-title">REGS DIV1 — CONTRACTS</h1>
                 <p class="section-subtitle">عقود وقوائم لاعبي أندية القسم الأول المسجلين</p>
             </div>
-            <div class="contracts-container" id="contracts-container"></div>
+            <div class="contracts-container" id="contracts-container">
+                <!-- Rendered via Javascript -->
+            </div>
         </section>
 
     </main>
@@ -618,16 +686,4 @@
     <script>
         /* --- Data Store --- */
         const div1Data = [
-            { pos: 1, name: "RCA", p: 0, w: 0, d: 0, l: 0, gf: 0, ga: 0, gd: 0, pts: 0, owner: "<@mejinina_2>", manager: "<@.themagic.>" },
-            { pos: 2, name: "WAC", p: 0, w: 0, d: 0, l: 0, gf: 0, ga: 0, gd: 0, pts: 0, owner: "<@andrewwww___.>", manager: "N/A" },
-            { pos: 3, name: "KAC", p: 0, w: 0, d: 0, l: 0, gf: 0, ga: 0, gd: 0, pts: 0, owner: "<@anasss0876>", manager: "N/A" },
-            { pos: 4, name: "KACM", p: 0, w: 0, d: 0, l: 0, gf: 0, ga: 0, gd: 0, pts: 0, owner: "<@hamza_founti>", manager: "<@l5ofax.06>" },
-            { pos: 5, name: "CRB", p: 0, w: 0, d: 0, l: 0, gf: 0, ga: 0, gd: 0, pts: 0, owner: "<@alilo_crb>", manager: "<@skwadra_0049>" },
-            { pos: 6, name: "MAS", p: 0, w: 0, d: 0, l: 0, gf: 0, ga: 0, gd: 0, pts: 0, owner: "<@zacky_fesska>", manager: "<@reslienzav2>" },
-            { pos: 7, name: "IRT", p: 0, w: 0, d: 0, l: 0, gf: 0, ga: 0, gd: 0, pts: 0, owner: "<@tanjawi_uh_07>", manager: "N/A" },
-            { pos: 8, name: "JSK", p: 0, w: 0, d: 0, l: 0, gf: 0, ga: 0, gd: 0, pts: 0, owner: "<@maheroujda0roblox>", manager: "N/A" }
-        ];
-
-        const div2Data = [
-            { pos: 1, name: "Zamalek", p: 0, w: 0, d: 0, l: 0, gf: 0, ga: 0, gd: 0, pts: 0, owner: "<@spi7_x>", manager: "N/A" },
-          
+            { pos: 1, name: "RCA", p: 0, w: 0, d: 0
